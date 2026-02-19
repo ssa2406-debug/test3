@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PKN2503407-B</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      overflow-x: hidden;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: #ffffff;
+      color: #111;
+    }
+
+    /* 오버레이 열린 동안 배경 스크롤 방지 */
+    body.lock {
+      overflow: hidden;
+      height: 100vh;
+      touch-action: none;
+    }
+
+    .wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 26px 18px 30px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 22px 0 26px;
+      font-size: 44px;
+      font-weight: 700;
+      color: #555;
+    }
+
+    .sub {
+      font-size: 18px;
+      font-weight: 600;
+      color: #555;
+      line-height: 1.4;
+      margin-bottom: 30px;
+    }
+
+    /* 썸네일 그리드 */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .thumb {
+      border: 2px solid #bcbcbc;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      cursor: pointer;
+      background: #f5f5f5;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: white;
+      display: none;
+      z-index: 9999;
+
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    .overlay.show { display: block; }
+
+    /* 상단 버튼 영역 */
+    .topbar {
+      position: sticky;
+      top: 0;
+      padding: 12px 16px; /* 기본(웹) */
+      display: flex;
+      justify-content: space-between;
+      z-index: 10;
+
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(6px);
+    }
+
+    .btn {
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Viewer */
+    .viewer {
+      min-height: 100vh;  /* fallback */
+      min-height: 100svh; /* 모바일 안전 */
+      min-height: 100dvh; /* 최신 모바일 동적 뷰포트 */
+
+      width: 100%;
+      display: grid;
+      place-items: center;
+      overflow: visible;
+      user-select: none;
+      box-sizing: border-box;
+
+      padding: 6px 0 18px; /* ⭐ 최종 간격 */
+
+      /* ✅ 확대/이동을 위해 */
+      touch-action: pan-y pinch-zoom;
+    }
+
+    /* 이미지: contain */
+    .viewer img {
+      max-width: 100%;
+      height: auto;
+      width: auto;
+      object-fit: contain;
+      display: block;
+
+      pointer-events: auto;
+      -webkit-user-drag: none;
+
+      transform-origin: center center;
+      will-change: transform;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* 비디오: contain + 흰 배경(남는 영역) */
+    .viewer video {
+      max-width: 100%;
+      height: auto;
+      width: auto;
+      object-fit: contain;
+      display: block;
+
+      background: #fff;
+      outline: none;
+      border: 0;
+
+      pointer-events: auto;
+      -webkit-user-drag: none;
+
+      transform-origin: center center;
+      will-change: transform;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* 모바일 최적화 + 모바일에서만 위로 올리기 */
+    @media (max-width: 768px) {
+      .topbar {
+        padding-top: calc(8px + env(safe-area-inset-top));
+        padding-right: 12px;
+        padding-left: 12px;
+        padding-bottom: 8px;
+      }
+
+      .viewer {
+        place-items: start center; /* ✅ 모바일에서만 중앙을 위로 */
+        padding-top: 8px;         /* 너무 딱 붙지 않게 */
+        padding-bottom: 12px;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        border-radius: 10px;
+      }
+    }
+
+    .tp-logo {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .tp-logo img {
+      width: 44px;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <h1>PKN2503407-B</h1>
+
+    <div class="sub">
+      Woven - Plain Weave<br>
+      Nylon 96% Span 4%<br>
+      240(g/m²) / 7.08(oz)<br>
+      Piece Dye
+    </div>
+
+    <div class="grid">
+      <div class="thumb" data-type="image" data-src="2.png"><img src="1.png" alt=""></div>
+      <div class="thumb" data-type="image" data-src="4.png"><img src="3.png" alt=""></div>
+
+      <!-- ✅ 크롭된 영상 파일로 교체: 6_clean.mp4 -->
+      <div class="thumb" data-type="video" data-src="6_clean.mp4"><img src="5.png" alt=""></div>
+
+      <div class="thumb" data-type="image" data-src="8.png"><img src="7.png" alt=""></div>
+    </div>
+
+    <div class="tp-logo">
+      <img src="./tp-logo.png" alt="TP Logo">
+    </div>
+  </div>
+
+  <!-- Overlay Viewer -->
+  <div class="overlay" id="overlay">
+    <div class="topbar">
+      <button class="btn" id="backBtn">← Back</button>
+      <button class="btn" id="closeBtn">Close ✕</button>
+    </div>
+    <div class="viewer" id="viewer"></div>
+  </div>
+
+  <script>
+    const overlay = document.getElementById("overlay");
+    const viewer = document.getElementById("viewer");
+    const backBtn = document.getElementById("backBtn");
+    const closeBtn = document.getElementById("closeBtn");
+    const thumbs = Array.from(document.querySelectorAll(".thumb"));
+
+    let currentIndex = 0;
+
+    // 확대 상태
+    let activeMedia = null; // img or video
+    let scale = 1;
+    let translateX = 0;
+    let translateY = 0;
+
+    // 핀치 줌 상태
+    let pinchStartDist = 0;
+    let pinchStartScale = 1;
+    let isPinching = false;
+
+    // 드래그(이동) 상태 (확대 상태에서만)
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragOriginX = 0;
+    let dragOriginY = 0;
+    let isDragging = false;
+
+    // 더블탭
+    let lastTapTime = 0;
+
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+    function applyTransform() {
+      if (!activeMedia) return;
+      activeMedia.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    }
+
+    function resetZoom() {
+      scale = 1;
+      translateX = 0;
+      translateY = 0;
+      applyTransform();
+    }
+
+    function setActiveMedia(el) {
+      activeMedia = el;
+      resetZoom();
+    }
+
+    function showMedia(index) {
+      const n = thumbs.length;
+      currentIndex = ((index % n) + n) % n;
+
+      viewer.innerHTML = "";
+      activeMedia = null;
+
+      const el = thumbs[currentIndex];
+      const type = el.dataset.type;
+      const src = el.dataset.src;
+
+      if (type === "video") {
+        const video = document.createElement("video");
+        video.src = src;
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.controls = false;
+        video.preload = "metadata";
+        viewer.appendChild(video);
+
+        const p = video.play();
+        if (p && typeof p.catch === "function") p.catch(() => {});
+
+        setActiveMedia(video);
+      } else {
+        const img = document.createElement("img");
+        img.src = src;
+        viewer.appendChild(img);
+        setActiveMedia(img);
+      }
+
+      overlay.scrollTop = 0;
+    }
+
+    function openViewer(index) {
+      showMedia(index);
+      overlay.classList.add("show");
+      document.body.classList.add("lock");
+      history.pushState({ open: true }, "");
+    }
+
+    function closeViewer() {
+      overlay.classList.remove("show");
+      viewer.innerHTML = "";
+      document.body.classList.remove("lock");
+    }
+
+    function next() { showMedia(currentIndex + 1); }
+    function prev() { showMedia(currentIndex - 1); }
+
+    thumbs.forEach((el, i) => el.addEventListener("click", () => openViewer(i)));
+
+    backBtn.addEventListener("click", () => history.back());
+    closeBtn.addEventListener("click", () => history.back());
+
+    window.addEventListener("popstate", () => {
+      if (overlay.classList.contains("show")) closeViewer();
+    });
+
+    function onDoubleTap(clientX, clientY) {
+      if (!activeMedia) return;
+
+      const rect = activeMedia.getBoundingClientRect();
+      const cx = clientX - rect.left - rect.width / 2;
+      const cy = clientY - rect.top - rect.height / 2;
+
+      if (scale === 1) {
+        scale = 2.5;
+        translateX = -cx * (scale - 1);
+        translateY = -cy * (scale - 1);
+      } else {
+        resetZoom();
+      }
+      applyTransform();
+    }
+
+    // 클릭(탭) 네비게이션: 확대(>1) 상태면 넘기지 않음
+    viewer.addEventListener("click", (e) => {
+      if (!overlay.classList.contains("show")) return;
+      if (scale > 1.01) return;
+
+      const rect = viewer.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      if (x < rect.width / 2) prev();
+      else next();
+    });
+
+    // Touch: 핀치 줌 + 더블탭
+    viewer.addEventListener("touchstart", (e) => {
+      if (!overlay.classList.contains("show")) return;
+      if (!activeMedia) return;
+
+      const now = Date.now();
+
+      if (e.touches.length === 1) {
+        // 더블탭 감지
+        if (now - lastTapTime < 280) {
+          const t = e.touches[0];
+          onDoubleTap(t.clientX, t.clientY);
+          lastTapTime = 0;
+          return;
+        }
+        lastTapTime = now;
+
+        // 확대 상태에서만 드래그 이동 시작
+        if (scale > 1.01) {
+          isDragging = true;
+          const t = e.touches[0];
+          dragStartX = t.clientX;
+          dragStartY = t.clientY;
+          dragOriginX = translateX;
+          dragOriginY = translateY;
+        }
+      }
+
+      // 핀치 시작
+      if (e.touches.length === 2) {
+        isPinching = true;
+        const [a, b] = e.touches;
+        pinchStartDist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+        pinchStartScale = scale;
+      }
+    }, { passive: true });
+
+    viewer.addEventListener("touchmove", (e) => {
+      if (!overlay.classList.contains("show")) return;
+      if (!activeMedia) return;
+
+      // 핀치 중이면 스크롤 방지하고 확대
+      if (isPinching && e.touches.length === 2) {
+        e.preventDefault();
+        const [a, b] = e.touches;
+        const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+        scale = clamp(pinchStartScale * (dist / pinchStartDist), 1, 5);
+        applyTransform();
+        return;
+      }
+
+      // 확대 상태 드래그 이동
+      if (isDragging && e.touches.length === 1 && scale > 1.01) {
+        e.preventDefault();
+        const t = e.touches[0];
+        translateX = dragOriginX + (t.clientX - dragStartX);
+        translateY = dragOriginY + (t.clientY - dragStartY);
+        applyTransform();
+      }
+    }, { passive: false });
+
+    viewer.addEventListener("touchend", () => {
+      isPinching = false;
+      isDragging = false;
+      if (scale < 1.01) resetZoom();
+    }, { passive: true });
+
+    viewer.addEventListener("touchcancel", () => {
+      isPinching = false;
+      isDragging = false;
+      if (scale < 1.01) resetZoom();
+    }, { passive: true });
+
+    // Mouse: 더블클릭 줌 + (확대 시) 드래그 이동
+    viewer.addEventListener("dblclick", (e) => {
+      if (!overlay.classList.contains("show")) return;
+      onDoubleTap(e.clientX, e.clientY);
+    });
+
+    viewer.addEventListener("mousedown", (e) => {
+      if (!overlay.classList.contains("show")) return;
+      if (!activeMedia) return;
+      if (scale <= 1.01) return;
+
+      isDragging = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      dragOriginX = translateX;
+      dragOriginY = translateY;
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      translateX = dragOriginX + (e.clientX - dragStartX);
+      translateY = dragOriginY + (e.clientY - dragStartY);
+      applyTransform();
+    });
+
+    window.addEventListener("mouseup", () => {
+      isDragging = false;
+      if (scale < 1.01) resetZoom();
+    });
+  </script>
+</body>
+</html>
